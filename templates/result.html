@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        #customers {
+          font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          width: 50%;
+        }
+        
+        #customers td, #customers th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+        
+        #customers tr:nth-child(even){background-color: #f2f2f2;}
+        
+        #customers tr:hover {background-color: #ddd;}
+        
+        #customers th {
+          padding-top: 12px;
+          padding-bottom: 12px;
+          text-align: left;
+          background-color: #4CAF50;
+          color: white;
+        }
+        </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+</head>
+<body>
+    <h2>Semister Wise Result</h2>
+    <table id="customers">
+        <tr>
+            <th>Level Term</th>
+            <th>SGPA</th>
+        </tr>
+        {% for item in tables %}
+        <tr>
+        {% for i in item %}
+        
+             <td> {{ i }} </td>
+        
+        {% endfor %}
+    </tr>
+        {% endfor %}
+    </table>
+
+    <h2>CGPA upto Semister-{{a}}</h2>
+    <table id="customers">
+        <tr>
+            <th>Total Credit</th>
+            <th>CGPA</th>
+        </tr>
+        <tr>
+        
+             <td> {{ b }} </td>
+             <td> {{ c }}</td>
+        
+        <tr></tr>
+    </table>
+    <h2>Course Wise Result</h2>
+    <table id="customers">
+        <tr>
+            <th>Course Code</th>
+            <th class="center">Course Credit</th>
+            <th class="center">Level-Term</th>
+            <th class="center">Sessional</th>
+            <th class="center">Result</th>
+            <th class="center">Course type</th>
+            </tr>
+            {% for item in tables1 %}
+            <tr>
+            {% for i in item %}
+            
+                 <td> {{ i }} </td>
+            
+            {% endfor %}
+        </tr>
+            {% endfor %}
+    </table>
+
+
+    
+    
+</body>
+</html>
