@@ -71,7 +71,7 @@ def index():
                         prod=credit*grade
                         fail_credit=0.0
                         if i[4]=="F":
-                            fail_credit=converter(i[4])
+                            fail_credit=float(i[1])
                         term_wise_data[i[2]].append(credit)
                         term_wise_data[i[2]].append(prod)
                         term_wise_data[i[2]].append(fail_credit)
@@ -81,7 +81,7 @@ def index():
                         prod=credit*grade
                         fail_credit=0.0
                         if i[4]=="F":
-                            fail_credit=converter(i[4])
+                            fail_credit=float(i[1])
                         term_wise_data[i[2]][0]=term_wise_data[i[2]][0]+credit
                         term_wise_data[i[2]][1]=term_wise_data[i[2]][1]+prod
                         term_wise_data[i[2]][2]=term_wise_data[i[2]][2]+fail_credit
