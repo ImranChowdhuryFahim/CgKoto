@@ -49,11 +49,12 @@ def index():
            'loginuser': 'Sign In'
            }
         with requests.Session() as s:
-            url="http://www.cuet.ac.bd/course_registration/"
+            url="https://www.cuet.ac.bd/course_registration/index.php"
             r=s.get(url,headers=headers)
             r=s.post(url,data=login_data,headers=headers)
-            r=s.get("http://www.cuet.ac.bd/course_registration/result_published.php",headers=headers)
+            r=s.get("https://www.cuet.ac.bd/course_registration/result_published.php",headers=headers)
             g=bs4.BeautifulSoup(r.text,'lxml')
+            
             Table=g.table
             if Table is not None:
                 row=Table.find_all('tr')
