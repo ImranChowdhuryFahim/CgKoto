@@ -103,7 +103,10 @@ def index():
                     d.append(i)
                     d.append(term_wise_data[i][3])
                     sgpa.append(d)
-                cgpa=round(sm/(totalcredit - fail),2)
+                try:
+                   cgpa=round(sm/(totalcredit - fail),2)
+                except:
+                    cgpa = 0
                 tc=(totalcredit - fail)
                 return render_template('result.html',tables=sgpa,a=len(sgpa),b=tc,c=cgpa,tables1=Result)
             else:
