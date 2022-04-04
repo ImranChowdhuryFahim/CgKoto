@@ -1,6 +1,4 @@
-
 from flask import Flask, render_template ,redirect,request
-from matplotlib.pyplot import sca
 import requests
 import cloudscraper
 import bs4
