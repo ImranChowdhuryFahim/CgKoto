@@ -1,6 +1,8 @@
 
 from flask import Flask, render_template ,redirect,request
+from matplotlib.pyplot import sca
 import requests
+import cloudscraper
 import bs4
 app = Flask(__name__)
 
@@ -50,10 +52,16 @@ def index():
            }
         with requests.Session() as s:
             url="https://course.cuet.ac.bd/index.php"
-            r=s.get(url,headers=headers)
-            r=s.post(url,data=login_data,headers=headers)
-            r=s.get("https://course.cuet.ac.bd/result_published.php",headers=headers)
-            g=bs4.BeautifulSoup(r.text,'lxml')
+            scraper = cloudscraper.create_scraper()
+            r=scraper.get(url,headers=headers)
+            r=scraper.post(url,data=login_data,headers=headers)
+            r=scraper.get("https://course.cuet.ac.bd/result_published.php")
+            # r=s.get(url,headers=headers)
+            # r=s.post(url,data=login_data,headers=headers)
+            
+            # r=scraper.get("https://course.cuet.ac.bd/result_published.php")
+            # r=s.get("https://course.cuet.ac.bd/result_published.php",headers=headers)
+            # g=bs4.BeautifulSoup(r.text,'lxml')
 
             return r.text            
             Table=g.table
