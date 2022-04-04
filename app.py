@@ -55,7 +55,7 @@ def index():
             r=s.get("https://course.cuet.ac.bd/result_published.php",headers=headers)
             g=bs4.BeautifulSoup(r.text,'lxml')
 
-            return r.text
+            
             Table=g.table
             if Table is not None:
                 row=Table.find_all('tr')
