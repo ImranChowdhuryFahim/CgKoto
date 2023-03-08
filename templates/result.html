@@ -36,7 +36,7 @@
             <th>Level Term</th>
             <th>GPA</th>
         </tr>
-        {% for item in tables %}
+        {% for item in semester_wise_cgpa_data %}
         <tr>
         {% for i in item %}
         
@@ -47,7 +47,7 @@
         {% endfor %}
     </table>
 
-    <h2>CGPA upto Semester-{{a}}</h2>
+    <h2>CGPA upto Semester-{{number_of_semesters}}</h2>
     <table id="customers">
         <tr>
             <th>Total Credit</th>
@@ -55,8 +55,8 @@
         </tr>
         <tr>
         
-             <td> {{ b }} </td>
-             <td> {{ c }}</td>
+             <td> {{ totalPassedCredit }} </td>
+             <td> {{ CGPA }}</td>
         
         <tr></tr>
     </table>
@@ -70,7 +70,7 @@
             <th class="center">Result</th>
             <th class="center">Course type</th>
             </tr>
-            {% for item in tables1 %}
+            {% for item in resultData %}
             <tr>
             {% for i in item %}
             

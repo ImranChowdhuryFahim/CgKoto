@@ -1,30 +1,29 @@
-
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, request
 import requests
 import bs4
 app = Flask(__name__)
 
 
-def converter(d):
-    if d == "A+":
+def gradePointConverter(gradeLetter):
+    if gradeLetter == "A+":
         return 4.00
-    elif d == "A":
+    elif gradeLetter == "A":
         return 3.75
-    elif d == "A-":
+    elif gradeLetter == "A-":
         return 3.50
-    elif d == "B+":
+    elif gradeLetter == "B+":
         return 3.25
-    elif d == "B":
+    elif gradeLetter == "B":
         return 3.00
-    elif d == "B-":
+    elif gradeLetter == "B-":
         return 2.75
-    elif d == "C+":
+    elif gradeLetter == "C+":
         return 2.50
-    elif d == "C":
+    elif gradeLetter == "C":
         return 2.25
-    elif d == "D":
+    elif gradeLetter == "D":
         return 2.00
-    elif d == "F":
+    elif gradeLetter == "F":
         return 0.00
 
 
@@ -36,84 +35,82 @@ def result():
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == "POST":
-        id = request.form.get('uname')
-        ps = request.form.get('psw')
-        Table = ''
-        Result = []
+        studentID = request.form.get('uname')
+        password = request.form.get('psw')
+        tableData = ''
+        resultData = []
         headers = {
             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
         }
         login_data = {
-            'user_email': id,
-            'user_password': ps,
+            'user_email': studentID,
+            'user_password': password,
             'loginuser': 'Sign In'
         }
-        with requests.Session() as s:
+        with requests.Session() as session:
             url = "https://course.cuet.ac.bd/index.php"
-            r = s.get(url, headers=headers)
-            r = s.post(url, data=login_data,
+            response = session.get(url, headers=headers)
+            response = session.post(url, data=login_data,
                        headers=headers)
-            r = s.get(
+            response = session.get(
                 "https://course.cuet.ac.bd/result_published.php", headers=headers)
-            g = bs4.BeautifulSoup(r.text, 'lxml')
+            processedResponse = bs4.BeautifulSoup(response.text, 'lxml')
 
-            Table = g.table
-            if Table is not None:
-                row = Table.find_all('tr')
+            tableData = processedResponse.table
+            if tableData is not None:
+                row = tableData.find_all('tr')
                 for tr in row:
                     td = tr.find_all('td')
-                    rw = [i.text for i in td]
-                    Result.append(rw)
-                Result = Result[1:]
-                term_wise_data = {}
-                for i in Result:
-                    if i[2] not in term_wise_data:
-                        term_wise_data[i[2]] = []
+                    row_data = [i.text for i in td]
+                    resultData.append(row_data)
+                resultData = resultData[1:]
+                semester_wise_data = {}
+                for i in resultData:
+                    if i[2] not in semester_wise_data:
+                        semester_wise_data[i[2]] = []
                         credit = float(i[1])
-                        grade = converter(i[4])
-                        prod = credit*grade
+                        gradePoint = gradePointConverter(i[4])
+                        weightedGrade = credit*gradePoint
                         fail_credit = 0.0
                         if i[4] == "F":
                             fail_credit = float(i[1])
-                        term_wise_data[i[2]].append(credit)
-                        term_wise_data[i[2]].append(prod)
-                        term_wise_data[i[2]].append(fail_credit)
+                        semester_wise_data[i[2]].append(credit)
+                        semester_wise_data[i[2]].append(weightedGrade)
+                        semester_wise_data[i[2]].append(fail_credit)
                     else:
                         credit = float(i[1])
-                        grade = converter(i[4])
-                        prod = credit*grade
+                        gradePoint = gradePointConverter(i[4])
+                        weightedGrade = credit*gradePoint
                         fail_credit = 0.0
                         if i[4] == "F":
                             fail_credit = float(i[1])
-                        term_wise_data[i[2]
-                                       ][0] = term_wise_data[i[2]][0]+credit
-                        term_wise_data[i[2]][1] = term_wise_data[i[2]][1]+prod
-                        term_wise_data[i[2]
-                                       ][2] = term_wise_data[i[2]][2]+fail_credit
-                for i in term_wise_data:
-                    term_wise_data[i].append(
-                        round(term_wise_data[i][1]/(term_wise_data[i][0] - term_wise_data[i][2]), 2))
-                sm = 0
-                fail = 0
-                totalcredit = 0
-                sd = 0
-                sgpa = []
-                level = []
-                for i in term_wise_data:
-                    sm = sm + term_wise_data[i][1]
-                    fail = fail + term_wise_data[i][2]
-                    totalcredit = totalcredit + term_wise_data[i][0]
-                    sd = sd + term_wise_data[i][0]*term_wise_data[i][3]
+                        semester_wise_data[i[2]
+                                       ][0] = semester_wise_data[i[2]][0]+credit
+                        semester_wise_data[i[2]][1] = semester_wise_data[i[2]][1]+weightedGrade
+                        semester_wise_data[i[2]
+                                       ][2] = semester_wise_data[i[2]][2]+fail_credit
+                for i in semester_wise_data:
+                    semester_wise_data[i].append(
+                        round(semester_wise_data[i][1]/(semester_wise_data[i][0] - semester_wise_data[i][2]), 2))
+
+                totalWeightedPassedCredit= 0
+                totalFailedCredit = 0
+                totalCredit = 0
+                semester_wise_cgpa = []
+                for i in semester_wise_data:
+                    totalWeightedPassedCredit = totalWeightedPassedCredit + semester_wise_data[i][1]
+                    totalFailedCredit = totalFailedCredit + semester_wise_data[i][2]
+                    totalCredit = totalCredit + semester_wise_data[i][0]
                     d = []
                     d.append(i)
-                    d.append(term_wise_data[i][3])
-                    sgpa.append(d)
+                    d.append(semester_wise_data[i][3])
+                    semester_wise_cgpa.append(d)
                 try:
-                    cgpa = round(sm/(totalcredit - fail), 2)
+                    cgpa = round(totalWeightedPassedCredit/(totalCredit - totalFailedCredit), 2)
                 except:
                     cgpa = 0
-                tc = (totalcredit - fail)
-                return render_template('result.html', tables=sgpa, a=len(sgpa), b=tc, c=cgpa, tables1=Result)
+                totalPassedCredit = (totalCredit - totalFailedCredit)
+                return render_template('result.html', semester_wise_cgpa_data=semester_wise_cgpa, number_of_semesters=len(semester_wise_cgpa), totalPassedCredit=totalPassedCredit, CGPA=cgpa, resultData=resultData)
             else:
                 return render_template('index.html', msg='Wrong Password!!!')
 
@@ -127,6 +124,5 @@ def page_not_found(e):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')
 
-# arif
