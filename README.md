@@ -8,3 +8,8 @@ docker-compose up
 
 ## Goto the url
 http://localhost/
+
+## Sample Credential:
+StudentID: 1704118
+Password: 34815793
+
